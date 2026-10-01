@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juice Shop Clone — Login</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 420px; margin: 60px auto; padding: 0 16px; }
+    h1 { font-size: 1.4rem; }
+    label { display: block; margin-top: 14px; font-weight: 600; }
+    input { width: 100%; padding: 10px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 18px; padding: 10px 16px; cursor: pointer; }
+    .error { color: #c0392b; font-size: 0.9rem; margin-top: 6px; min-height: 1.2em; }
+    #result { margin-top: 18px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Login</h1>
+  <form id="loginForm" novalidate>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" autocomplete="username" />
+    <div class="error" id="emailError"></div>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" autocomplete="current-password" />
+    <div class="error" id="passwordError"></div>
+
+    <button type="submit">Log in</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    // ---- Client-side validation ----
+    // Checks: non-empty fields, email contains "@", password >= 8 chars.
+    function validate(email, password) {
+      const errors = { email: "", password: "" };
+      if (!email.trim()) {
+        errors.email = "Email is required.";
+      } else if (!email.includes("@")) {
+        errors.email = "Email must contain '@'.";
+      }
+      if (!password) {
+        errors.password = "Password is required.";
+      } else if (password.length < 8) {
+        errors.password = "Password must be at least 8 characters.";
+      }
+      return errors;
+    }
+
+    const form = document.getElementById("loginForm");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const errors = validate(email, password);
+      emailError.textContent = errors.email;
+      passwordError.textContent = errors.password;
+      if (errors.email || errors.password) return;
+
+      // ---- Send to server for server-side validation ----
+      try {
+        const res = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        // textContent (not innerHTML) => no XSS from server message
+        result.textContent = data.message;
+      } catch (err) {
+        result.textContent = "Server error. Is the backend running?";
+      }
+    });
+  </script>
+</body>
+</html>

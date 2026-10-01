@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Juice Shop Clone — Login (VULNERABLE demo)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 420px; margin: 60px auto; padding: 0 16px; }
+    label { display: block; margin-top: 14px; font-weight: 600; }
+    input { width: 100%; padding: 10px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 18px; padding: 10px 16px; cursor: pointer; }
+    #result { margin-top: 18px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Login (vulnerable demo — do NOT use in production)</h1>
+  <form id="loginForm" novalidate>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" />
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" />
+    <button type="submit">Log in</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    // SAME validation as the secure version: email must contain "@", password >= 8 chars.
+    function validate(email, password) {
+      if (!email.trim() || !email.includes("@")) return false;
+      if (!password || password.length < 8) return false;
+      return true;
+    }
+
+    const form = document.getElementById("loginForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      if (!validate(email, password)) {
+        result.textContent = "Invalid input.";
+        return;
+      }
+      // *** THE VULNERABILITY ***
+      // Reflecting user input with innerHTML instead of textContent.
+      // Any HTML/JS in the email field is parsed and executed by the browser.
+      result.innerHTML = "Welcome, " + email;
+    });
+  </script>
+</body>
+</html>
