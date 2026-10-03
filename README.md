@@ -52,3 +52,11 @@ An alert box pops up, showing the injected script ran. The secure `index.html` i
 
 
 
+## Notes on real-world security
+
+This demo has no database or real accounts. A production version would add:
+
+- **Parameterized queries** for any database lookup, never string concatenation, to prevent SQL injection.
+- **bcrypt password hashing**: `await bcrypt.hash(password, 12)` on signup (store only the hash) and `await bcrypt.compare(attempt, hash)` on login.
+- **Server-assigned roles**: ignore any `role` field sent by the client; new accounts are always `customer`.
+- **HTTPS**, rate limiting on `/login`, and a `Content-Security-Policy` header as a backup against XSS.
