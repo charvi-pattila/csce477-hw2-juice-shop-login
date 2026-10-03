@@ -50,12 +50,5 @@ The server does not serve this file. Open it directly in a browser (double-click
 
 An alert box pops up, showing the injected script ran. The secure `index.html` is not affected, because it only ever writes text into the page with `textContent`, so nothing is parsed as HTML.
 
-> ⚠️ This file is intentionally vulnerable and exists only for this assignment. Do not reuse it.
 
-## Notes on real-world security
 
-This demo intentionally has no real authentication. A production login would:
-
-- **Never store plaintext passwords.** Hash with **bcrypt** (or Argon2), e.g. `bcrypt.hash(password, 12)` on registration and `bcrypt.compare(input, storedHash)` on login.
-- **Use parameterized queries** for any database lookup, never string concatenation — this prevents SQL injection.
-- Serve over **HTTPS**, set a strong **Content-Security-Policy**, rate-limit login attempts, and return generic error messages that don't reveal whether the email exists.
